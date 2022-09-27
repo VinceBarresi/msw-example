@@ -1,0 +1,53 @@
+---
+name: CI
+
+on:
+  push:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref_name != 'main' }}
+
+permissions: write-all
+
+jobs:
+  # single job that generates and outputs a common id
+  prepare-cypress:
+    runs-on: ubuntu-latest
+    outputs:
+      ci-id: ${{ steps.generate-ci-id.outputs.ci-id }}
+    steps:
+      - name: Generate unique ID 💎
+        id: generate-ci-id
+        # take the current commit + timestamp together
+        # the typical value would be something like
+        # "sha-5d3fe...35d3-time-1620841214"
+        run: echo "::set-output name=ci-id::sha-$GITHUB_SHA-time-$(date +"%s")"
+
+      - name: Print unique ID 🖨`
+        run: echo "generated id ${{ steps.generate-ci-id.outputs.ci-id }}"
+
+  run-consumer-app-cypress:
+    needs: [workflow-info, build_image, prepare-cypress]
+    runs-on: [self-hosted, cypress-runner]
+    if: contains(fromJSON(needs.build.outputs.matrix), 'consumer-app')
+    env:
+      APP_WORKING_DIR: 'msw-example/graphql-react-apollo'
+    steps:
+      - name: checkout and install dependencies
+      - uses: actions/checkout@v2
+      - uses: borales/actions-yarn@v3.0.0
+        with:
+          cmd: install
+      
+      - name: Run Cypress tests
+        uses: cypress-io/github-action@v4
+        with:
+          command: |
+            yarn test:e2e \
+            --tag local \
+            --e2e 
+          install: false
+          component: false
+          wait-on: 'http://localhost:3001'
+          wait-on-timeout: 120
