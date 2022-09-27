@@ -34,8 +34,10 @@ jobs:
     env:
       APP_WORKING_DIR: 'msw-example/graphql-react-apollo'
     steps:
-      - name: checkout and install dependencies
+      - name: checkout
       - uses: actions/checkout@v2
+
+      - name  install dependencies
       - uses: borales/actions-yarn@v3.0.0
         with:
           cmd: install
