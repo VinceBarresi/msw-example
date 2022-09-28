@@ -33,14 +33,10 @@ jobs:
     env:
       APP_WORKING_DIR: 'msw-example/graphql-react-apollo'
     steps:
-      - name: checkout
-        uses: actions/checkout@v2
-      
-      - name: Cache Nuget
-        uses: actions/cache@v1
-
-      - name  install dependencies
-        run: yarn
+      - uses: actions/checkout@v2
+      - uses: borales/actions-yarn@v3.0.0
+        with:
+          cmd: install # will run `yarn install` command
       
       - name: Run Cypress tests
         uses: cypress-io/github-action@v4
