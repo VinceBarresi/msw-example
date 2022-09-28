@@ -34,12 +34,15 @@ jobs:
       APP_WORKING_DIR: 'msw-example/graphql-react-apollo'
     steps:
       - name: checkout
-      - uses: actions/checkout@v2
+        uses: actions/checkout@v2
+      
+      - name: Cache Nuget
+        uses: actions/cache@v1
 
-      # - name  install dependencies
-      # - uses: borales/actions-yarn@v3.0.0
-      #   with:
-      #     cmd: install
+      - name  install dependencies
+        uses: borales/actions-yarn@v3.0.0
+        with:
+          cmd: install
       
       - name: Run Cypress tests
         uses: cypress-io/github-action@v4
