@@ -12,25 +12,24 @@ permissions: write-all
 
 jobs:
   # single job that generates and outputs a common id
-  prepare-cypress:
-    runs-on: ubuntu-latest
-    outputs:
-      ci-id: ${{ steps.generate-ci-id.outputs.ci-id }}
-    steps:
-      - name: Generate unique ID 💎
-        id: generate-ci-id
-        # take the current commit + timestamp together
-        # the typical value would be something like
-        # "sha-5d3fe...35d3-time-1620841214"
-        run: echo "::set-output name=ci-id::sha-$GITHUB_SHA-time-$(date +"%s")"
+  # prepare-cypress:
+  #   runs-on: ubuntu-latest
+  #   outputs:
+  #     ci-id: ${{ steps.generate-ci-id.outputs.ci-id }}
+  #   steps:
+  #     - name: Generate unique ID 💎
+  #       id: generate-ci-id
+  #       # take the current commit + timestamp together
+  #       # the typical value would be something like
+  #       # "sha-5d3fe...35d3-time-1620841214"
+  #       run: echo "::set-output name=ci-id::sha-$GITHUB_SHA-time-$(date +"%s")"
 
-      - name: Print unique ID 🖨`
-        run: echo "generated id ${{ steps.generate-ci-id.outputs.ci-id }}"
+  #     - name: Print unique ID 🖨`
+  #       run: echo "generated id ${{ steps.generate-ci-id.outputs.ci-id }}"
 
   run-consumer-app-cypress:
-    needs: [workflow-info, build_image, prepare-cypress]
-    runs-on: [self-hosted, cypress-runner]
-    if: contains(fromJSON(needs.build.outputs.matrix), 'consumer-app')
+    # needs: [prepare-cypress]
+    runs-on: [cypress-runner]
     env:
       APP_WORKING_DIR: 'msw-example/graphql-react-apollo'
     steps:
