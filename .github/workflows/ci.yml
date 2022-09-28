@@ -29,7 +29,7 @@ jobs:
 
   run-consumer-app-cypress:
     # needs: [prepare-cypress]
-    runs-on: [cypress-runner]
+    runs-on: ubuntu-latest
     env:
       APP_WORKING_DIR: 'msw-example/graphql-react-apollo'
     steps:
